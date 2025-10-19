@@ -11,8 +11,7 @@ import java.util.List;
 public class GuestController {
 
     @PostMapping("/add")
-    public Guest add(@RequestParam("guestId") int guestId,
-                     @RequestParam("guestName") String guestName) {
+    public Guest add(@RequestParam("guestId") int guestId, @RequestParam("guestName") String guestName) {
         Guest g = new Guest(guestId, guestName);
         DB.guests.add(g);
         return g;
@@ -24,8 +23,7 @@ public class GuestController {
     }
 
     @PutMapping("/update")
-    public Object update(@RequestParam("guestId") int guestId,
-                         @RequestParam("guestName") String guestName) {
+    public Object update(@RequestParam("guestId") int guestId, @RequestParam("guestName") String guestName) {
         for (Guest g : DB.guests) {
             if (g.getGuestId() == guestId) {
                 g.setGuestName(guestName);
