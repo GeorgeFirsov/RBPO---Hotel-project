@@ -11,9 +11,7 @@ import java.util.List;
 public class HotelController {
 
     @PostMapping("/add")
-    public Hotel add(@RequestParam("hotelId") int hotelId,
-                     @RequestParam("hotelName") String hotelName,
-                     @RequestParam("address") String address) {
+    public Hotel add(@RequestParam("hotelId") int hotelId, @RequestParam("hotelName") String hotelName, @RequestParam("address") String address) {
         Hotel h = new Hotel(hotelId, hotelName, address);
         DB.hotels.add(h);
         return h;
@@ -25,8 +23,7 @@ public class HotelController {
     }
 
     @PutMapping("/update")
-    public Object update(@RequestParam("hotelId") int hotelId,
-                         @RequestParam("hotelName") String hotelName) {
+    public Object update(@RequestParam("hotelId") int hotelId, @RequestParam("hotelName") String hotelName) {
         for (Hotel h : DB.hotels) {
             if (h.getHotelId() == hotelId) {
                 h.setHotelName(hotelName);

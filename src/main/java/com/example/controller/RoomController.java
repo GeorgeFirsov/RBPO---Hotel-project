@@ -11,8 +11,7 @@ import java.util.List;
 public class RoomController {
 
     @PostMapping("/add")
-    public Room add(@RequestParam("hotelId") int hotelId,
-                    @RequestParam("roomId") int roomId) {
+    public Room add(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId) {
         Room r = new Room(hotelId, roomId);
         DB.rooms.add(r);
         return r;
@@ -24,9 +23,7 @@ public class RoomController {
     }
 
     @PutMapping("/update")
-    public Object update(@RequestParam("hotelId") int hotelId,
-                         @RequestParam("roomId") int roomId,
-                         @RequestParam("newRoomId") int newRoomId) {
+    public Object update(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("newRoomId") int newRoomId) {
         Room target = null;
         for (Room r : DB.rooms) {
             if (r.getHotelId() == hotelId && r.getRoomId() == roomId) {

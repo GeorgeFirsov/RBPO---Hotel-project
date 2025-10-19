@@ -12,12 +12,8 @@ import java.util.List;
 public class BookingController {
 
     @PostMapping("/add")
-    public Object add(@RequestParam("hotelId") int hotelId,
-                      @RequestParam("roomId") int roomId,
-                      @RequestParam("guestId") int guestId,
-                      @RequestParam("start") String start,
-                      @RequestParam("end") String end) {
-        LocalDate s = LocalDate.parse(start);   // формат: yyyy-MM-dd
+    public Object add(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("guestId") int guestId, @RequestParam("start") String start, @RequestParam("end") String end) {
+        LocalDate s = LocalDate.parse(start);
         LocalDate e = LocalDate.parse(end);
         for (Booking b : DB.bookings) {
             if (b.getHotelId() == hotelId && b.getRoomId() == roomId) {
@@ -37,12 +33,8 @@ public class BookingController {
     }
 
     @PutMapping("/update")
-    public Object update(@RequestParam("hotelId") int hotelId,
-                         @RequestParam("roomId") int roomId,
-                         @RequestParam("guestId") int guestId,
-                         @RequestParam("start") String start,
-                         @RequestParam("end") String end) {
-        LocalDate s = LocalDate.parse(start);   // формат: yyyy-MM-dd
+    public Object update(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("guestId") int guestId, @RequestParam("start") String start, @RequestParam("end") String end) {
+        LocalDate s = LocalDate.parse(start);
         LocalDate e = LocalDate.parse(end);
 
         Booking target = null;
@@ -67,9 +59,7 @@ public class BookingController {
     }
 
     @DeleteMapping("/delete")
-    public String delete(@RequestParam("hotelId") int hotelId,
-                         @RequestParam("roomId") int roomId,
-                         @RequestParam("guestId") int guestId) {
+    public String delete(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("guestId") int guestId) {
         boolean removed = DB.bookings.removeIf(b ->
                 b.getHotelId() == hotelId &&
                         b.getRoomId() == roomId &&
