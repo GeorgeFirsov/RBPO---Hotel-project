@@ -1,53 +1,79 @@
 package com.example.controller;
 
-import com.example.model.Room;
+import com.example.model.Booking;
 import com.example.storage.DB;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/rooms")
-public class RoomController {
+@RequestMapping("/api/bookings")
+public class BookingController {
 
     @PostMapping("/add")
-    public Room add(@RequestParam("hotelId") int hotelId,
-                    @RequestParam("roomId") int roomId) {
-        Room r = new Room(hotelId, roomId);
-        DB.rooms.add(r);
-        return r;
+    public Object add(@RequestParam("hotelId") int hotelId,
+                      @RequestParam("roomId") int roomId,
+                      @RequestParam("guestId") int guestId,
+                      @RequestParam("start") String start,
+                      @RequestParam("end") String end) {
+        LocalDate s = LocalDate.parse(start);   // формат: yyyy-MM-dd
+        LocalDate e = LocalDate.parse(end);
+        for (Booking b : DB.bookings) {
+            if (b.getHotelId() == hotelId && b.getRoomId() == roomId) {
+                if (!s.isAfter(b.getEndDate()) && !e.isBefore(b.getStartDate())) {
+                    return "booking dates overlap";
+                }
+            }
+        }
+        Booking nb = new Booking(hotelId, roomId, guestId, s, e);
+        DB.bookings.add(nb);
+        return nb;
     }
 
     @GetMapping
-    public List<Room> all() {
-        return DB.rooms;
+    public List<Booking> all() {
+        return DB.bookings;
     }
 
     @PutMapping("/update")
     public Object update(@RequestParam("hotelId") int hotelId,
                          @RequestParam("roomId") int roomId,
-                         @RequestParam("newRoomId") int newRoomId) {
-        Room target = null;
-        for (Room r : DB.rooms) {
-            if (r.getHotelId() == hotelId && r.getRoomId() == roomId) {
-                target = r; break;
-            }
-        }
-        if (target == null) return "room not found";
+                         @RequestParam("guestId") int guestId,
+                         @RequestParam("start") String start,
+                         @RequestParam("end") String end) {
+        LocalDate s = LocalDate.parse(start);   // формат: yyyy-MM-dd
+        LocalDate e = LocalDate.parse(end);
 
-        target.setRoomId(newRoomId);
-        for (var b : DB.bookings) {
-            if (b.getHotelId() == hotelId && b.getRoomId() == roomId) {
-                b.setRoomId(newRoomId);
+        Booking target = null;
+        for (Booking b : DB.bookings) {
+            if (b.getHotelId() == hotelId && b.getRoomId() == roomId && b.getGuestId() == guestId) {
+                target = b; break;
             }
         }
+        if (target == null) return "booking not found";
+
+        for (Booking b : DB.bookings) {
+            if (b == target) continue;
+            if (b.getHotelId() == hotelId && b.getRoomId() == roomId) {
+                if (!s.isAfter(b.getEndDate()) && !e.isBefore(b.getStartDate())) {
+                    return "booking dates overlap";
+                }
+            }
+        }
+        target.setStartDate(s);
+        target.setEndDate(e);
         return target;
     }
 
     @DeleteMapping("/delete")
-    public void delete(@RequestParam("hotelId") int hotelId,
-                       @RequestParam("roomId") int roomId) {
-        DB.rooms.removeIf(r -> r.getHotelId() == hotelId && r.getRoomId() == roomId);
-        DB.bookings.removeIf(b -> b.getHotelId() == hotelId && b.getRoomId() == roomId);
+    public String delete(@RequestParam("hotelId") int hotelId,
+                         @RequestParam("roomId") int roomId,
+                         @RequestParam("guestId") int guestId) {
+        boolean removed = DB.bookings.removeIf(b ->
+                b.getHotelId() == hotelId &&
+                        b.getRoomId() == roomId &&
+                        b.getGuestId() == guestId);
+        return removed ? "deleted" : "booking not found";
     }
 }
