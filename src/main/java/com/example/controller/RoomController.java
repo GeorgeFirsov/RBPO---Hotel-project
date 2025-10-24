@@ -42,8 +42,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/delete")
-    public void delete(@RequestParam("hotelId") int hotelId,
-                       @RequestParam("roomId") int roomId) {
+    public void delete(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId) {
         DB.rooms.removeIf(r -> r.getHotelId() == hotelId && r.getRoomId() == roomId);
         DB.bookings.removeIf(b -> b.getHotelId() == hotelId && b.getRoomId() == roomId);
     }
