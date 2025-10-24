@@ -60,10 +60,7 @@ public class BookingController {
 
     @DeleteMapping("/delete")
     public String delete(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("guestId") int guestId) {
-        boolean removed = DB.bookings.removeIf(b ->
-                b.getHotelId() == hotelId &&
-                        b.getRoomId() == roomId &&
-                        b.getGuestId() == guestId);
+        boolean removed = DB.bookings.removeIf(b -> b.getHotelId() == hotelId && b.getRoomId() == roomId && b.getGuestId() == guestId);
         return removed ? "deleted" : "booking not found";
     }
 }
