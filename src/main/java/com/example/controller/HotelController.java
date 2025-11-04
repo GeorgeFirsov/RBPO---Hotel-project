@@ -9,34 +9,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hotels")
 public class HotelController {
+    private final DB db;
+    public HotelController(DB db){ this.db = db; }
 
     @PostMapping("/add")
-    public Hotel add(@RequestParam("hotelId") int hotelId, @RequestParam("hotelName") String hotelName, @RequestParam("address") String address) {
-        Hotel h = new Hotel(hotelId, hotelName, address);
-        DB.hotels.add(h);
-        return h;
+    public Hotel add(@RequestParam int hotelId, @RequestParam String hotelName, @RequestParam String address){
+        return db.saveHotel(hotelId, hotelName, address);
     }
 
     @GetMapping
-    public List<Hotel> all() {
-        return DB.hotels;
-    }
+    public List<Hotel> all(){ return db.hotels(); }
 
     @PutMapping("/update")
-    public Object update(@RequestParam("hotelId") int hotelId, @RequestParam("hotelName") String hotelName) {
-        for (Hotel h : DB.hotels) {
-            if (h.getHotelId() == hotelId) {
-                h.setHotelName(hotelName);
-                return h;
-            }
-        }
-        return "hotel not found";
+    public Object update(@RequestParam int hotelId, @RequestParam String hotelName){
+        return db.updateHotelName(hotelId, hotelName);
     }
 
     @DeleteMapping("/delete")
-    public void delete(@RequestParam("hotelId") int hotelId) {
-        DB.hotels.removeIf(h -> h.getHotelId() == hotelId);
-        DB.rooms.removeIf(r -> r.getHotelId() == hotelId);
-        DB.bookings.removeIf(b -> b.getHotelId() == hotelId);
-    }
+    public void delete(@RequestParam int hotelId){ db.deleteHotel(hotelId); }
 }

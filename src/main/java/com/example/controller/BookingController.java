@@ -10,57 +10,37 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bookings")
 public class BookingController {
+    private final DB db;
+    public BookingController(DB db){ this.db = db; }
 
     @PostMapping("/add")
-    public Object add(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("guestId") int guestId, @RequestParam("start") String start, @RequestParam("end") String end) {
+    public Object add(@RequestParam int hotelId, @RequestParam int roomId, @RequestParam int guestId, @RequestParam String start, @RequestParam String end){
         LocalDate s = LocalDate.parse(start);
         LocalDate e = LocalDate.parse(end);
-        for (Booking b : DB.bookings) {
-            if (b.getHotelId() == hotelId && b.getRoomId() == roomId) {
-                if (!s.isAfter(b.getEndDate()) && !e.isBefore(b.getStartDate())) {
-                    return "booking dates overlap";
-                }
-            }
-        }
-        Booking nb = new Booking(hotelId, roomId, guestId, s, e);
-        DB.bookings.add(nb);
-        return nb;
+        if (db.countOverlaps(hotelId, roomId, s, e, null) > 0) return "booking dates overlap";
+        return db.addBooking(hotelId, roomId, guestId, s, e);
     }
 
     @GetMapping
-    public List<Booking> all() {
-        return DB.bookings;
-    }
+    public List<Booking> all(){ return db.bookings(); }
 
     @PutMapping("/update")
-    public Object update(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("guestId") int guestId, @RequestParam("start") String start, @RequestParam("end") String end) {
+    public Object update(@RequestParam int hotelId, @RequestParam int roomId, @RequestParam int guestId, @RequestParam String start, @RequestParam String end){
         LocalDate s = LocalDate.parse(start);
         LocalDate e = LocalDate.parse(end);
 
-        Booking target = null;
-        for (Booking b : DB.bookings) {
-            if (b.getHotelId() == hotelId && b.getRoomId() == roomId && b.getGuestId() == guestId) {
-                target = b; break;
-            }
-        }
+        Booking target = db.findBooking(hotelId, roomId, guestId);
         if (target == null) return "booking not found";
 
-        for (Booking b : DB.bookings) {
-            if (b == target) continue;
-            if (b.getHotelId() == hotelId && b.getRoomId() == roomId) {
-                if (!s.isAfter(b.getEndDate()) && !e.isBefore(b.getStartDate())) {
-                    return "booking dates overlap";
-                }
-            }
-        }
+        if (db.countOverlaps(hotelId, roomId, s, e, target.getId()) > 0) return "booking dates overlap";
+
         target.setStartDate(s);
         target.setEndDate(e);
-        return target;
+        return db.saveBooking(target);
     }
 
     @DeleteMapping("/delete")
-    public String delete(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("guestId") int guestId) {
-        boolean removed = DB.bookings.removeIf(b -> b.getHotelId() == hotelId && b.getRoomId() == roomId && b.getGuestId() == guestId);
-        return removed ? "deleted" : "booking not found";
+    public String delete(@RequestParam int hotelId, @RequestParam int roomId, @RequestParam int guestId){
+        return db.deleteBooking(hotelId, roomId, guestId) ? "deleted" : "booking not found";
     }
 }

@@ -9,41 +9,24 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
+    private final DB db;
+    public RoomController(DB db){ this.db = db; }
 
     @PostMapping("/add")
-    public Room add(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId) {
-        Room r = new Room(hotelId, roomId);
-        DB.rooms.add(r);
-        return r;
+    public Room add(@RequestParam int hotelId, @RequestParam int roomId){
+        return db.saveRoom(hotelId, roomId);
     }
 
     @GetMapping
-    public List<Room> all() {
-        return DB.rooms;
-    }
+    public List<Room> all(){ return db.rooms(); }
 
     @PutMapping("/update")
-    public Object update(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId, @RequestParam("newRoomId") int newRoomId) {
-        Room target = null;
-        for (Room r : DB.rooms) {
-            if (r.getHotelId() == hotelId && r.getRoomId() == roomId) {
-                target = r; break;
-            }
-        }
-        if (target == null) return "room not found";
-
-        target.setRoomId(newRoomId);
-        for (var b : DB.bookings) {
-            if (b.getHotelId() == hotelId && b.getRoomId() == roomId) {
-                b.setRoomId(newRoomId);
-            }
-        }
-        return target;
+    public Object update(@RequestParam int hotelId, @RequestParam int roomId, @RequestParam int newRoomId){
+        return db.renameRoom(hotelId, roomId, newRoomId);
     }
 
     @DeleteMapping("/delete")
-    public void delete(@RequestParam("hotelId") int hotelId, @RequestParam("roomId") int roomId) {
-        DB.rooms.removeIf(r -> r.getHotelId() == hotelId && r.getRoomId() == roomId);
-        DB.bookings.removeIf(b -> b.getHotelId() == hotelId && b.getRoomId() == roomId);
+    public void delete(@RequestParam int hotelId, @RequestParam int roomId){
+        db.deleteRoom(hotelId, roomId);
     }
 }

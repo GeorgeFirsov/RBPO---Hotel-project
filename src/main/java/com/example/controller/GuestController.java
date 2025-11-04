@@ -9,33 +9,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/guests")
 public class GuestController {
+    private final DB db;
+    public GuestController(DB db){ this.db = db; }
 
     @PostMapping("/add")
-    public Guest add(@RequestParam("guestId") int guestId, @RequestParam("guestName") String guestName) {
-        Guest g = new Guest(guestId, guestName);
-        DB.guests.add(g);
-        return g;
+    public Guest add(@RequestParam int guestId, @RequestParam String guestName){
+        return db.saveGuest(guestId, guestName);
     }
 
     @GetMapping
-    public List<Guest> all() {
-        return DB.guests;
-    }
+    public List<Guest> all(){ return db.guests(); }
 
     @PutMapping("/update")
-    public Object update(@RequestParam("guestId") int guestId, @RequestParam("guestName") String guestName) {
-        for (Guest g : DB.guests) {
-            if (g.getGuestId() == guestId) {
-                g.setGuestName(guestName);
-                return g;
-            }
-        }
-        return "guest not found";
+    public Object update(@RequestParam int guestId, @RequestParam String guestName){
+        Guest g = db.findGuest(guestId);
+        if (g == null) return "guest not found";
+        g.setGuestName(guestName);
+        return db.saveGuest(g.getGuestId(), g.getGuestName());
     }
 
     @DeleteMapping("/delete")
-    public void delete(@RequestParam("guestId") int guestId) {
-        DB.guests.removeIf(g -> g.getGuestId() == guestId);
-        DB.bookings.removeIf(b -> b.getGuestId() == guestId);
-    }
+    public void delete(@RequestParam int guestId){ db.deleteGuest(guestId); }
 }
