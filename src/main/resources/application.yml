@@ -1,11 +1,11 @@
 spring:
-datasource:
-url: jdbc:postgresql://localhost:5432/hotel_db
-username: spring_service
-password: "1234"
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hotel_db
+    username: spring_service
+    password: "1234"
 jpa:
-hibernate:
-ddl-auto: update
+  hibernate:
+    ddl-auto: update
 
 server:
-port: 8080
+  port: 8080
