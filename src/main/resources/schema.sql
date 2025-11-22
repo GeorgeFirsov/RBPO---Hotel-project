@@ -2,6 +2,9 @@ create table if not exists hotels(hotel_id int primary key, hotel_name varchar(1
 create table if not exists guests(guest_id int primary key, guest_name varchar(100) not null);
 create table if not exists rooms(hotel_id int not null, room_id int not null, primary key (hotel_id, room_id), constraint fk_rooms_hotel foreign key (hotel_id) references hotels(hotel_id) on delete cascade);
 create table if not exists bookings(id bigserial primary key, hotel_id int not null, room_id int not null, guest_id int not null, start_date date not null, end_date date not null, constraint fk_book_room foreign key (hotel_id, room_id) references rooms(hotel_id, room_id) on delete cascade, constraint fk_book_guest foreign key (guest_id) references guests(guest_id) on delete cascade, constraint chk_dates check (start_date <= end_date));
-create index if not exists idx_book_room  on bookings(hotel_id, room_id);
+create index if not exists idx_book_room on bookings(hotel_id, room_id);
 create index if not exists idx_book_guest on bookings(guest_id);
-create table if not exists users(id bigserial primary key, username varchar(50)  not null unique, password varchar(200) not null, role varchar(20)  not null);
+create table if not exists users(id bigserial primary key, username varchar(50) not null unique, password varchar(200) not null, role varchar(20) not null);
+create table if not exists payments(id bigserial primary key, booking_id bigint not null, guest_id int not null, amount numeric(12,2) not null, constraint fk_pay_booking foreign key (booking_id) references bookings(id) on delete cascade, constraint fk_pay_guest foreign key (guest_id) references guests(guest_id) on delete cascade);
+create index if not exists idx_pay_booking on payments(booking_id);
+create index if not exists idx_pay_guest on payments(guest_id);

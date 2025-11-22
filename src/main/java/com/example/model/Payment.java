@@ -9,20 +9,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "bookings")
+@Table(name = "payments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Booking {
+public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int hotelId;
-    private int roomId;
+    private Long bookingId;
     private int guestId;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private BigDecimal amount;
 }

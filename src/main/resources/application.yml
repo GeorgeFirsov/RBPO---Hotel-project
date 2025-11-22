@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${PG_URL:jdbc:postgresql://localhost:5432/hotel_db}
-    username: ${PG_USER:spring_service}
-    password: ${PG_PASS:1234}
+    url: ${PG_URL}
+    username: ${PG_USER}
+    password: ${PG_PASS}
 jpa:
   hibernate:
     ddl-auto: update
