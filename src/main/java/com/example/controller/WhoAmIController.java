@@ -19,11 +19,7 @@ public class WhoAmIController {
         }
         result.put("authenticated", true);
         result.put("username", authentication.getName());
-        String role = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(a -> a.startsWith("ROLE_") ? a.substring(5) : a)
-                .findFirst()
-                .orElse("UNKNOWN");
+        String role = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).map(a -> a.startsWith("ROLE_") ? a.substring(5) : a).findFirst().orElse("UNKNOWN");
         result.put("role", role);
         return result;
     }

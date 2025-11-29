@@ -25,28 +25,14 @@ public class JwtTokenProvider {
         Instant now = Instant.now();
         Instant expiry = now.plusMillis(accessTokenValidityMs);
 
-        return Jwts.builder()
-                .setSubject(username)
-                .claim("role", role)
-                .claim("tokenType", "ACCESS")
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(expiry))
-                .signWith(SignatureAlgorithm.HS256, secret.getBytes(StandardCharsets.UTF_8))
-                .compact();
+        return Jwts.builder().setSubject(username).claim("role", role).claim("tokenType", "ACCESS").setIssuedAt(Date.from(now)).setExpiration(Date.from(expiry)).signWith(SignatureAlgorithm.HS256, secret.getBytes(StandardCharsets.UTF_8)).compact();
     }
 
     public String createRefreshToken(String username, String deviceId) {
         Instant now = Instant.now();
         Instant expiry = now.plusMillis(refreshTokenValidityMs);
 
-        return Jwts.builder()
-                .setSubject(username)
-                .claim("deviceId", deviceId)
-                .claim("tokenType", "REFRESH")
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(expiry))
-                .signWith(SignatureAlgorithm.HS256, secret.getBytes(StandardCharsets.UTF_8))
-                .compact();
+        return Jwts.builder().setSubject(username).claim("deviceId", deviceId).claim("tokenType", "REFRESH").setIssuedAt(Date.from(now)).setExpiration(Date.from(expiry)).signWith(SignatureAlgorithm.HS256, secret.getBytes(StandardCharsets.UTF_8)).compact();
     }
 
     public boolean validateAccessToken(String token) {
@@ -78,10 +64,7 @@ public class JwtTokenProvider {
     }
 
     private Claims parseClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret.getBytes(StandardCharsets.UTF_8))
-                .parseClaimsJws(token)
-                .getBody();
+        return Jwts.parser().setSigningKey(secret.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token).getBody();
     }
 
     public long getAccessTokenValidityMs() {

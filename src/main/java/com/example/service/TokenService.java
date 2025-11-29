@@ -20,10 +20,7 @@ public class TokenService {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
-    public TokenService(UserRepository userRepository,
-                        UserSessionRepository userSessionRepository,
-                        JwtTokenProvider jwtTokenProvider,
-                        PasswordEncoder passwordEncoder) {
+    public TokenService(UserRepository userRepository, UserSessionRepository userSessionRepository, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userSessionRepository = userSessionRepository;
         this.jwtTokenProvider = jwtTokenProvider;

@@ -18,19 +18,15 @@ public class UserSession {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    private String userEmail;                // логин/емейл пользователя
-    private String deviceId;                 // айди устройства (можно передавать с клиента)
-
+    private String userEmail;
+    private String deviceId;
     @Column(length = 512)
-    private String accessToken;              // Access-токен (для истории, можно не использовать)
-
+    private String accessToken;
     @Column(length = 512)
-    private String refreshToken;             // Refresh-токен, по нему ищем сессию
-
-    private Instant accessTokenExpiry;       // когда истечёт access
-    private Instant refreshTokenExpiry;      // когда истечёт refresh
+    private String refreshToken;
+    private Instant accessTokenExpiry;
+    private Instant refreshTokenExpiry;
 
     @Enumerated(EnumType.STRING)
-    private SessionStatus status;            // ACTIVE / USED / REVOKED
+    private SessionStatus status;
 }

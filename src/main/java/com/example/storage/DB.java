@@ -84,11 +84,7 @@ public class DB {
         if (existing == null) return "room not found";
         Room conflict = em.find(Room.class, newKey);
         if (conflict != null) return "room already exists";
-        em.createQuery("update Booking b set b.roomId=:newRoomId where b.hotelId=:hotelId and b.roomId=:roomId")
-                .setParameter("newRoomId", newRoomId)
-                .setParameter("hotelId", hotelId)
-                .setParameter("roomId", roomId)
-                .executeUpdate();
+        em.createQuery("update Booking b set b.roomId=:newRoomId where b.hotelId=:hotelId and b.roomId=:roomId").setParameter("newRoomId", newRoomId).setParameter("hotelId", hotelId).setParameter("roomId", roomId).executeUpdate();
         em.remove(existing);
         Room newRoom = new Room(hotelId, newRoomId);
         em.persist(newRoom);
@@ -114,22 +110,13 @@ public class DB {
     public long countOverlaps(int hotelId, int roomId, LocalDate start, LocalDate end, Long exceptId) {
         String jpql = "select count(b) from Booking b where b.hotelId=:hotelId and b.roomId=:roomId and not (b.endDate < :start or b.startDate > :end)";
         if (exceptId != null) jpql += " and b.id <> :exceptId";
-        TypedQuery<Long> q = em.createQuery(jpql, Long.class)
-                .setParameter("hotelId", hotelId)
-                .setParameter("roomId", roomId)
-                .setParameter("start", start)
-                .setParameter("end", end);
+        TypedQuery<Long> q = em.createQuery(jpql, Long.class).setParameter("hotelId", hotelId).setParameter("roomId", roomId).setParameter("start", start).setParameter("end", end);
         if (exceptId != null) q.setParameter("exceptId", exceptId);
         return q.getSingleResult();
     }
 
     public Booking findBooking(int hotelId, int roomId, int guestId) {
-        List<Booking> list = em.createQuery("from Booking b where b.hotelId=:hotelId and b.roomId=:roomId and b.guestId=:guestId", Booking.class)
-                .setParameter("hotelId", hotelId)
-                .setParameter("roomId", roomId)
-                .setParameter("guestId", guestId)
-                .setMaxResults(1)
-                .getResultList();
+        List<Booking> list = em.createQuery("from Booking b where b.hotelId=:hotelId and b.roomId=:roomId and b.guestId=:guestId", Booking.class).setParameter("hotelId", hotelId).setParameter("roomId", roomId).setParameter("guestId", guestId).setMaxResults(1).getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
 
