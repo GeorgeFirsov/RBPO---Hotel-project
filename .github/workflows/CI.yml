@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-app:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Restore TLS keystore from secret
+        run: |
+          mkdir -p src/main/resources/ssl
+          echo "$TLS_KEYSTORE_BASE64" | base64 -d > src/main/resources/ssl/hotel-1bib23427.p12
+        env:
+          TLS_KEYSTORE_BASE64: ${{ secrets.TLS_KEYSTORE_BASE64 }}
+
+      - name: Build with Maven
+        run: mvn -B clean package
+        env:
+          TLS_KEYSTORE_PASSWORD: ${{ secrets.TLS_KEYSTORE_PASSWORD }}
+          PG_SECRET_PASSWORD: ${{ secrets.PG_SECRET_PASSWORD }}
+
+      - name: Upload JAR artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hotel-app
+          path: target/*.jar
