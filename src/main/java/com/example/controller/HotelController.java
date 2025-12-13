@@ -1,7 +1,7 @@
 package com.example.controller;
 
 import com.example.model.Hotel;
-import com.example.storage.DB;
+import com.example.service.HotelService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,22 +9,26 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/hotels")
 public class HotelController {
-    private final DB db;
-    public HotelController(DB db){ this.db = db; }
+    private final HotelService hotelService;
+    public HotelController(HotelService hotelService) { this.hotelService = hotelService; }
 
     @PostMapping("/add")
-    public Hotel add(@RequestParam int hotelId, @RequestParam String hotelName, @RequestParam String address){
-        return db.saveHotel(hotelId, hotelName, address);
+    public Hotel add(@RequestParam int hotelId, @RequestParam String hotelName, @RequestParam String address) {
+        return hotelService.addHotel(hotelId, hotelName, address);
     }
 
     @GetMapping
-    public List<Hotel> all(){ return db.hotels(); }
+    public List<Hotel> all() {
+        return hotelService.getAllHotels();
+    }
 
     @PutMapping("/update")
-    public Object update(@RequestParam int hotelId, @RequestParam String hotelName){
-        return db.updateHotelName(hotelId, hotelName);
+    public Object update(@RequestParam int hotelId, @RequestParam String hotelName) {
+        return hotelService.updateHotelName(hotelId, hotelName);
     }
 
     @DeleteMapping("/delete")
-    public void delete(@RequestParam int hotelId){ db.deleteHotel(hotelId); }
+    public void delete(@RequestParam int hotelId) {
+        hotelService.deleteHotel(hotelId);
+    }
 }

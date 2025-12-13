@@ -1,11 +1,17 @@
 spring:
   datasource:
-    url: ${PG_URL:jdbc:postgresql://localhost:5432/hotel_db}
-    username: ${PG_USER:spring_service}
-    password: ${PG_PASS:1234}
-jpa:
-  hibernate:
-    ddl-auto: update
+    url: ${PG_URL}
+    username: ${PG_USER}
+    password: ${PG_PASS}
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 server:
   port: 8080
+  ssl:
+    enabled: true
+    key-store: classpath:ssl/hotel-1bib23427.p12
+    key-store-type: PKCS12
+    key-store-password: ${TLS_KEYSTORE_PASSWORD}
+    key-alias: hotel-1bib23427
